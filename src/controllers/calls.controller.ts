@@ -23,6 +23,15 @@ class CallsController {
     }
   };
 
+  public getAllCalls = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const calls: Record<string, Call> = await this.callService.getAllCalls();
+      res.status(200).json({ data: calls });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public createCall = async (callData: CreateCallDto, callback: (call: Call) => void) => {
     try {
       const createCallData: Call = await this.callService.createCall(callData);
@@ -47,7 +56,7 @@ class CallsController {
   public forwardMessage = async (messageData: CreateMessageDto, callback: (message: Message) => void) => {
     try {
       const forwardMessageData: Message = await this.callService.forwardMessage(messageData);
-      this.io.emit('messageSent', { callId: messageData.callId, message: forwardMessageData });
+      this.io.emit('messageSent', { callId: messageData.sender, message: forwardMessageData });
       callback(forwardMessageData);
     } catch (error) {
       console.error('Error forwarding message:', error);

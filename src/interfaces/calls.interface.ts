@@ -1,6 +1,9 @@
 export interface Call {
   id: string;
-  customer: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
   timestamp: Date;
   messages: Message[];
 }

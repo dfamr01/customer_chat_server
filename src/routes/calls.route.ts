@@ -16,13 +16,14 @@ class CallsRoute implements Routes {
 
   private initializeRoutes() {
     this.router.get(`${this.path}/addresses`, this.callsController.getAddresses);
+    this.router.get(`${this.path}`, this.callsController.getAllCalls);
   }
 
   public initializeSocketEvents(io: SocketIOServer) {
-    // this.io = io;
-    this.callsController.setSocketIOServer(io);
+    this.io = io;
+    this.callsController.setSocketIOServer(this.io);
 
-    io.on('connection', socket => {
+    this.io.on('connection', socket => {
       console.log('A user connected');
 
       socket.on('createCall', this.callsController.createCall);
