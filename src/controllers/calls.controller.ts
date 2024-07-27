@@ -17,7 +17,6 @@ class CallsController {
     try {
       const query: string = req.query.q as string;
       const addresses: Address[] = await this.callService.getAllAddresses(query);
-      console.log('🚀 ~ CallsController ~ getAddresses=s ~ addresses:', addresses);
       res.status(200).json({ data: addresses });
     } catch (error) {
       next(error);
