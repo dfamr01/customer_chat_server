@@ -42,14 +42,14 @@ class CallsController {
     }
   };
 
-  public deleteCall = async (callId: string, callback: (success: boolean) => void) => {
+  public deleteCall = async (callId: string, callback: (deleteCallData: Call | null) => void) => {
     try {
       const deleteCallData: Call = await this.callService.deleteCall(callId);
       this.io.emit('callDeleted', deleteCallData);
-      callback(true);
+      callback(deleteCallData);
     } catch (error) {
       console.error('Error deleting call:', error);
-      callback(false);
+      callback(null);
     }
   };
 

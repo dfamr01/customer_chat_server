@@ -42,11 +42,6 @@ class CallService {
       return call;
     }
     return null;
-    // const index = this.calls.get(callId)?.findIndex(call => call.id === callId);
-    // if (index === -1) throw new Error('Call not found');
-
-    // const [deletedCall] = this.calls.splice(index, 1);
-    // return deletedCall;
   }
 
   public async forwardMessage(messageData: CreateMessageDto): Promise<Message> {
