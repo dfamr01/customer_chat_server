@@ -15,8 +15,7 @@ class CallsController {
 
   public getAddresses = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const query: string = req.query.q as string;
-      const addresses: Address[] = await this.callService.getAllAddresses(query);
+      const addresses: Address[] = await this.callService.getAllAddresses();
       res.status(200).json({ data: addresses });
     } catch (error) {
       next(error);

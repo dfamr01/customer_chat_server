@@ -1,5 +1,4 @@
 import { Router } from 'express';
-// import { CreateUserDto } from '@dtos/users.dto';
 import { Routes } from '@interfaces/routes.interface';
 import CallsController from '@/controllers/calls.controller';
 import { Server as SocketIOServer } from 'socket.io';
