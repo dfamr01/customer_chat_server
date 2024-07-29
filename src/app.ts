@@ -29,11 +29,17 @@ class App {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
-    this.portWebSocket = +WEB_SOCKET_PORT || 3005;
 
     this.server = http.createServer(this.app);
 
-    this.io = new SocketIOServer(this.portWebSocket);
+    this.io = new SocketIOServer(this.server, {
+      path: '/socket.io',
+      //todo: fix cors later
+      cors: {
+        origin: '*',
+      },
+    });
+    // this.io = new SocketIOServer(this.portWebSocket);
 
     this.io.on('connection', socket => {
       console.log('App this.io.on ~ connection: success');
@@ -42,13 +48,13 @@ class App {
       });
     });
 
-    // this.io = new SocketIOServer(this.server, {
-    //   cors: {
-    //     origin: 'http://localhost:5173',
-    //     methods: ['GET', 'POST'],
-    //     credentials: true,
-    //   },
-    // });
+    this.io.on('disconnect', reason => {
+      console.log('App ~ this.io.on disconnect ~ reason:', reason);
+    });
+
+    this.io.on('error', error => {
+      console.log('App ~ this.io.on error ~ error:', error);
+    });
 
     // this.connectToDatabase();
 
@@ -61,7 +67,7 @@ class App {
 
   public listen() {
     try {
-      this.app.listen(this.port, () => {
+      this.server.listen(this.port, () => {
         logger.info(`=================================`);
         logger.info(`======= ENV: ${this.env} =======`);
         logger.info(`🚀 App listening on the port ${this.port}`);
@@ -94,7 +100,7 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
-    this.app.use(cors());
+    this.app.use(cors()); //todo: fix cors later
 
     // this.app.use(cors({ origin: ORIGIN, credentials: CREDENTIALS }));
     this.app.use(hpp());
