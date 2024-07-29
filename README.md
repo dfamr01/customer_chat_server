@@ -14,7 +14,6 @@ The server-side of this project is built on Node.js with Express, using TypeScri
 - Node.js
 - Express.js
 - TypeScript
-- MongoDB with Mongoose
 - Socket.IO
 
 ### Project Structure
