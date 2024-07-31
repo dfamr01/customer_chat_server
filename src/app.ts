@@ -33,7 +33,7 @@ class App {
     this.server = http.createServer(this.app);
 
     this.io = new SocketIOServer(this.server, {
-      path: '/socket.io',
+      path: '/customers-chat-server2/socket.io',
       //todo: fix cors later
       cors: {
         origin: '*',
