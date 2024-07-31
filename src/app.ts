@@ -43,6 +43,9 @@ class App {
     // });
 
     this.io = new SocketIOServer(this.server, {
+      cors: {
+        origin: '*',
+      },
       // path: '/customers-chat-server2/socket.io',
       // cors: {
       //   origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
