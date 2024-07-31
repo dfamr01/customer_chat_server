@@ -43,12 +43,12 @@ class App {
     // });
 
     this.io = new SocketIOServer(this.server, {
-      path: '/customers-chat-server2/socket.io',
-      cors: {
-        origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
-        methods: ['GET', 'POST'],
-        credentials: true,
-      },
+      // path: '/customers-chat-server2/socket.io',
+      // cors: {
+      //   origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
+      //   methods: ['GET', 'POST'],
+      //   credentials: true,
+      // },
     });
     // this.io = new SocketIOServer(this.portWebSocket);
 
