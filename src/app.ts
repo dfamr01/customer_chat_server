@@ -31,7 +31,9 @@ class App {
     this.port = PORT || 3000;
 
     this.server = http.createServer(this.app);
-
+    this.app.get('/customers-chat-server2/health', (req, res) => {
+      res.status(200).send('OK');
+    });
     // this.io = new SocketIOServer(this.server, {
     //   path: '/customers-chat-server2/socket.io',
     //   //todo: fix cors later
