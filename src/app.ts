@@ -32,11 +32,20 @@ class App {
 
     this.server = http.createServer(this.app);
 
+    // this.io = new SocketIOServer(this.server, {
+    //   path: '/customers-chat-server2/socket.io',
+    //   //todo: fix cors later
+    //   cors: {
+    //     origin: '*',
+    //   },
+    // });
+
     this.io = new SocketIOServer(this.server, {
       path: '/customers-chat-server2/socket.io',
-      //todo: fix cors later
       cors: {
-        origin: '*',
+        origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
+        methods: ['GET', 'POST'],
+        credentials: true,
       },
     });
     // this.io = new SocketIOServer(this.portWebSocket);
