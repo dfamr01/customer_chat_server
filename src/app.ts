@@ -29,6 +29,11 @@ class App {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
+    this.app.use(
+      cors({
+        origin: '*',
+      }),
+    ); //todo: fix cors later
 
     this.server = http.createServer(this.app);
 
@@ -100,7 +105,6 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
-    this.app.use(cors()); //todo: fix cors later
 
     // this.app.use(cors({ origin: ORIGIN, credentials: CREDENTIALS }));
     this.app.use(hpp());
