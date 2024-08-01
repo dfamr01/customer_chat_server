@@ -63,25 +63,23 @@ class App {
 
     // this.connectToDatabase();
 
-    this.initializeMiddlewares();
+    this.app.use(
+      cors({
+        origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
+        methods: ['GET', 'POST', 'OPTIONS'],
+        credentials: true,
+      }),
+    );
+
     this.io = new SocketIOServer(this.server, {
-      cors: {
-        origin: '*',
-      },
-      // path: '/socket.io',
       path: '/customers-chat-server2/socket.io',
-      // cors: {
-      //   origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
-      //   methods: ['GET', 'POST'],
-      //   credentials: true,
-      // },
+      cors: {
+        origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
+        methods: ['GET', 'POST', 'OPTIONS'],
+        credentials: true,
+      },
+      transports: ['websocket', 'polling'],
     });
-
-    this.initializeRoutes(routes);
-
-    this.initializeSwagger();
-    this.initializeErrorHandling();
-
     this.app.get('/customers-chat-server2/health', (req, res) => {
       res.status(200).send('OK');
     });
@@ -95,6 +93,24 @@ class App {
       console.log('oute for Socket.IO');
       res.send('Socket.IO endpoint');
     });
+    this.initializeMiddlewares();
+    // this.io = new SocketIOServer(this.server, {
+    //   cors: {
+    //     origin: '*',
+    //   },
+    //   // path: '/socket.io',
+    //   path: '/customers-chat-server2/socket.io',
+    //   // cors: {
+    //   //   origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
+    //   //   methods: ['GET', 'POST'],
+    //   //   credentials: true,
+    //   // },
+    // });
+
+    this.initializeRoutes(routes);
+
+    this.initializeSwagger();
+    this.initializeErrorHandling();
   }
 
   public listen() {
@@ -132,13 +148,13 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
-    this.app.use(
-      cors({
-        origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
-        methods: ['GET', 'POST', 'OPTIONS'],
-        credentials: true,
-      }),
-    );
+    // this.app.use(
+    //   cors({
+    //     origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
+    //     methods: ['GET', 'POST', 'OPTIONS'],
+    //     credentials: true,
+    //   }),
+    // );
     // this.app.use(cors()); //todo: fix cors later
 
     // this.app.use(cors({ origin: ORIGIN, credentials: CREDENTIALS }));
