@@ -29,26 +29,29 @@ class App {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
-
-    this.app.use(
-      cors({
-        origin: '*',
-      }),
-    ); //todo: fix cors later
+    const corsOptions = {
+      origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
+      methods: ['GET', 'POST', 'OPTIONS', 'HEAD'],
+      allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'Upgrade',
+        'Connection',
+        'Sec-WebSocket-Key',
+        'Sec-WebSocket-Version',
+        'Sec-WebSocket-Extensions',
+      ],
+      credentials: true,
+      exposedHeaders: ['Upgrade', 'Connection', 'Sec-WebSocket-Accept'],
+    };
 
     this.server = http.createServer(this.app);
-    this.app.use(
-      cors({
-        origin: '*',
-      }),
-    ); //todo: fix cors later
+    this.app.use(cors(corsOptions)); //todo: fix cors later
 
     this.io = new SocketIOServer(this.server, {
       path: '/socket.io',
       //todo: fix cors later
-      cors: {
-        origin: '*',
-      },
+      cors: corsOptions,
     });
 
     this.io.on('connection', socket => {
