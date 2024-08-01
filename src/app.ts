@@ -34,26 +34,38 @@ class App {
     this.app.get('/customers-chat-server2/health', (req, res) => {
       res.status(200).send('OK');
     });
-    // this.io = new SocketIOServer(this.server, {
-    //   path: '/customers-chat-server2/socket.io',
-    //   //todo: fix cors later
-    //   cors: {
-    //     origin: '*',
-    //   },
-    // });
+    // Your routes
+    this.app.use('/customers-chat-server2', () => {
+      console.log('oute for Socket.IO');
+    });
+
+    // Catch-all route for Socket.IO
+    this.app.use('/customers-chat-server2/socket.io', (req, res) => {
+      console.log('oute for Socket.IO');
+      res.send('Socket.IO endpoint');
+    });
 
     this.io = new SocketIOServer(this.server, {
+      path: '/customers-chat-server2/socket.io',
+      //todo: fix cors later
       cors: {
         origin: '*',
       },
-      // path: '/socket.io',
-      path: '/customers-chat-server2/socket.io',
-      // cors: {
-      //   origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
-      //   methods: ['GET', 'POST'],
-      //   credentials: true,
-      // },
     });
+
+    // this.io = new SocketIOServer(this.server, {
+    //   cors: {
+    //     origin: '*',
+    //   },
+    //   // path: '/socket.io',
+    //   path: '/customers-chat-server2/socket.io',
+    //   // cors: {
+    //   //   origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
+    //   //   methods: ['GET', 'POST'],
+    //   //   credentials: true,
+    //   // },
+    // });
+    // this.io = new SocketIOServer(3000);
     // this.io = new SocketIOServer(this.portWebSocket);
 
     this.io.on('connection', socket => {
