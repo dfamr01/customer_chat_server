@@ -29,6 +29,7 @@ class App {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
+
     this.app.use(
       cors({
         origin: '*',
@@ -44,7 +45,6 @@ class App {
         origin: '*',
       },
     });
-    // this.io = new SocketIOServer(this.portWebSocket);
 
     this.io.on('connection', socket => {
       console.log('App this.io.on ~ connection: success');
