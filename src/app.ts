@@ -29,84 +29,41 @@ class App {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
+    this.app.use(
+      cors({
+        origin: '*',
+      }),
+    ); //todo: fix cors later
+
     this.server = http.createServer(this.app);
 
-    // this.io = new SocketIOServer(this.server, {
-    //   cors: {
-    //     origin: '*',
-    //   },
-    //   // path: '/socket.io',
-    //   path: '/customers-chat-server2/socket.io',
-    //   // cors: {
-    //   //   origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
-    //   //   methods: ['GET', 'POST'],
-    //   //   credentials: true,
-    //   // },
-    // });
-    // this.io = new SocketIOServer(3000);
+    this.io = new SocketIOServer(this.server, {
+      path: '/socket.io',
+      //todo: fix cors later
+      cors: {
+        origin: '*',
+      },
+    });
     // this.io = new SocketIOServer(this.portWebSocket);
 
-    // this.io.on('connection', socket => {
-    //   console.log('App this.io.on ~ connection: success');
-    //   socket.on('disconnect', reason => {
-    //     console.log('App ~ this.io.on disconnect ~ reason:', reason);
-    //   });
-    // });
+    this.io.on('connection', socket => {
+      console.log('App this.io.on ~ connection: success');
+      socket.on('disconnect', reason => {
+        console.log('App ~ this.io.on disconnect ~ reason:', reason);
+      });
+    });
 
-    // this.io.on('disconnect', reason => {
-    //   console.log('App ~ this.io.on disconnect ~ reason:', reason);
-    // });
+    this.io.on('disconnect', reason => {
+      console.log('App ~ this.io.on disconnect ~ reason:', reason);
+    });
 
-    // this.io.on('error', error => {
-    //   console.log('App ~ this.io.on error ~ error:', error);
-    // });
+    this.io.on('error', error => {
+      console.log('App ~ this.io.on error ~ error:', error);
+    });
 
     // this.connectToDatabase();
 
-    this.app.use(
-      cors({
-        origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
-        methods: ['GET', 'POST', 'OPTIONS'],
-        credentials: true,
-      }),
-    );
-
-    this.io = new SocketIOServer(this.server, {
-      path: '/customers-chat-server2/socket.io',
-      cors: {
-        origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
-        methods: ['GET', 'POST', 'OPTIONS'],
-        credentials: true,
-      },
-      transports: ['websocket', 'polling'],
-    });
-    this.app.get('/customers-chat-server2/health', (req, res) => {
-      res.status(200).send('OK');
-    });
-    // Your routes
-    this.app.use('/customers-chat-server2', () => {
-      console.log('oute for Socket.IO');
-    });
-
-    // Catch-all route for Socket.IO
-    this.app.use('/customers-chat-server2/socket.io', (req, res) => {
-      console.log('oute for Socket.IO');
-      res.send('Socket.IO endpoint');
-    });
     this.initializeMiddlewares();
-    // this.io = new SocketIOServer(this.server, {
-    //   cors: {
-    //     origin: '*',
-    //   },
-    //   // path: '/socket.io',
-    //   path: '/customers-chat-server2/socket.io',
-    //   // cors: {
-    //   //   origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
-    //   //   methods: ['GET', 'POST'],
-    //   //   credentials: true,
-    //   // },
-    // });
-
     this.initializeRoutes(routes);
 
     this.initializeSwagger();
@@ -148,14 +105,6 @@ class App {
 
   private initializeMiddlewares() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
-    // this.app.use(
-    //   cors({
-    //     origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
-    //     methods: ['GET', 'POST', 'OPTIONS'],
-    //     credentials: true,
-    //   }),
-    // );
-    // this.app.use(cors()); //todo: fix cors later
 
     // this.app.use(cors({ origin: ORIGIN, credentials: CREDENTIALS }));
     this.app.use(hpp());
