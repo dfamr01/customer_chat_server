@@ -29,7 +29,41 @@ class App {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
+    this.server = http.createServer(this.app);
 
+    // this.io = new SocketIOServer(this.server, {
+    //   cors: {
+    //     origin: '*',
+    //   },
+    //   // path: '/socket.io',
+    //   path: '/customers-chat-server2/socket.io',
+    //   // cors: {
+    //   //   origin: ['https://customers-chat-website.vercel.app', 'http://localhost:5174'],
+    //   //   methods: ['GET', 'POST'],
+    //   //   credentials: true,
+    //   // },
+    // });
+    // this.io = new SocketIOServer(3000);
+    // this.io = new SocketIOServer(this.portWebSocket);
+
+    // this.io.on('connection', socket => {
+    //   console.log('App this.io.on ~ connection: success');
+    //   socket.on('disconnect', reason => {
+    //     console.log('App ~ this.io.on disconnect ~ reason:', reason);
+    //   });
+    // });
+
+    // this.io.on('disconnect', reason => {
+    //   console.log('App ~ this.io.on disconnect ~ reason:', reason);
+    // });
+
+    // this.io.on('error', error => {
+    //   console.log('App ~ this.io.on error ~ error:', error);
+    // });
+
+    // this.connectToDatabase();
+
+    this.initializeMiddlewares();
     this.io = new SocketIOServer(this.server, {
       cors: {
         origin: '*',
@@ -42,33 +76,12 @@ class App {
       //   credentials: true,
       // },
     });
-    // this.io = new SocketIOServer(3000);
-    // this.io = new SocketIOServer(this.portWebSocket);
 
-    this.io.on('connection', socket => {
-      console.log('App this.io.on ~ connection: success');
-      socket.on('disconnect', reason => {
-        console.log('App ~ this.io.on disconnect ~ reason:', reason);
-      });
-    });
-
-    this.io.on('disconnect', reason => {
-      console.log('App ~ this.io.on disconnect ~ reason:', reason);
-    });
-
-    this.io.on('error', error => {
-      console.log('App ~ this.io.on error ~ error:', error);
-    });
-
-    // this.connectToDatabase();
-
-    this.initializeMiddlewares();
     this.initializeRoutes(routes);
 
     this.initializeSwagger();
     this.initializeErrorHandling();
 
-    this.server = http.createServer(this.app);
     this.app.get('/customers-chat-server2/health', (req, res) => {
       res.status(200).send('OK');
     });
@@ -81,14 +94,6 @@ class App {
     this.app.use('/customers-chat-server2/socket.io', (req, res) => {
       console.log('oute for Socket.IO');
       res.send('Socket.IO endpoint');
-    });
-
-    this.io = new SocketIOServer(this.server, {
-      path: '/customers-chat-server2/socket.io',
-      //todo: fix cors later
-      cors: {
-        origin: '*',
-      },
     });
   }
 
