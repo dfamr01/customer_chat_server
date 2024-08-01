@@ -37,6 +37,11 @@ class App {
     ); //todo: fix cors later
 
     this.server = http.createServer(this.app);
+    this.app.use(
+      cors({
+        origin: '*',
+      }),
+    ); //todo: fix cors later
 
     this.io = new SocketIOServer(this.server, {
       path: '/socket.io',
