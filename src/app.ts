@@ -126,8 +126,8 @@ class App {
   private initializeRoutes(routes: Routes[]) {
     routes.forEach(route => {
       this.app.use('/', route.router);
-      if (route?.initializeSocketEvents) {
-        route?.initializeSocketEvents(this.io);
+      if (route?.initializeWebSocketEvents) {
+        route?.initializeWebSocketEvents(this.io);
       }
     });
   }
