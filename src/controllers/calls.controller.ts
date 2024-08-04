@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateCallDto, CreateMessageDto } from '@dtos/calls.dto';
-import { Call, Message, Address } from '@interfaces/calls.interface';
+import { CreateMessageDto } from '@dtos/calls.dto';
+import { Call, Message } from '@interfaces/calls.interface';
 import CallService from '@services/calls.service';
 import { Server as SocketIOServer } from 'socket.io';
 
@@ -13,31 +13,12 @@ class CallsController {
 
   public callService = new CallService();
 
-  public getAddresses = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const addresses: Address[] = await this.callService.getAllAddresses();
-      res.status(200).json({ data: addresses });
-    } catch (error) {
-      next(error);
-    }
-  };
-
   public getAllCalls = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const calls: Record<string, Call> = await this.callService.getAllCalls();
       res.status(200).json({ data: calls });
     } catch (error) {
       next(error);
-    }
-  };
-
-  public createCall = async (callData: CreateCallDto, callback: (call: Call) => void) => {
-    try {
-      const createCallData: Call = await this.callService.createCall(callData);
-      this.io.emit('callCreated', createCallData);
-      callback(createCallData);
-    } catch (error) {
-      console.error('Error creating call:', error);
     }
   };
 

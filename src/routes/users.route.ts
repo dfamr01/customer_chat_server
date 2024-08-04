@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
-import CallsController from '@/controllers/calls.controller';
 import { Server as SocketIOServer } from 'socket.io';
 import WebSocketBase from './websocket.base';
+import UsersController from '@/controllers/users.controller';
 
-class CallsRoute extends WebSocketBase implements Routes {
-  public path = '/calls';
+class UsersRoute extends WebSocketBase implements Routes {
+  public path = '/users';
   public router = Router();
-  public callsController = new CallsController();
+  public callsController = new UsersController();
 
   constructor() {
     super();
@@ -15,7 +15,7 @@ class CallsRoute extends WebSocketBase implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.get(`${this.path}`, this.callsController.getAllCalls);
+    this.router.get(`${this.path}/addresses`, this.callsController.getAddresses);
   }
 
   public initializeWebSocketEvents(io: SocketIOServer) {
@@ -26,8 +26,8 @@ class CallsRoute extends WebSocketBase implements Routes {
     this.io.on('connection', socket => {
       console.log('A user connected');
 
-      socket.on('deleteCall', this.callsController.deleteCall);
-      // socket.on('forwardMessage', this.callsController.forwardMessage);
+      socket.on('createCall', this.callsController.createCall);
+      socket.on('forwardMessage', this.callsController.forwardMessage);
 
       socket.on('disconnect', () => {
         console.log('User disconnected');
@@ -36,4 +36,4 @@ class CallsRoute extends WebSocketBase implements Routes {
   }
 }
 
-export default CallsRoute;
+export default UsersRoute;

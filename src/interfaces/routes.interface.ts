@@ -4,5 +4,5 @@ import { Server as SocketIOServer } from 'socket.io';
 export interface Routes {
   path?: string;
   router: Router;
-  initializeSocketEvents?: (io: SocketIOServer) => void;
+  initializeWebSocketEvents?: (io: SocketIOServer) => void;
 }
