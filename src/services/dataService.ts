@@ -19,10 +19,8 @@ class DataService {
   }
 
   async fetchPatientData(url: string): Promise<any> {
-    const token = await tokenService.getToken();
     try {
-      return await httpClient.get(url);
-      // return await httpClient.get(url, {}, { Authorization: `Bearer ${token}` });
+      return await httpClient.get(url, { responseType: 'arraybuffer' });
     } catch (error) {
       console.error('Failed to fetch patient data:', (error as Error).message);
       throw error;
