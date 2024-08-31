@@ -1,12 +1,14 @@
 import { parentPort, workerData } from 'worker_threads';
 import dataService from '../services/dataService';
+import unzipper from 'unzipper';
+import csvParser from 'csv-parser';
 
 interface WorkerData {
   urls: string[];
 }
 
 interface PhenotypeCount {
-  [key: string]: number;
+  [key: string]: { description: string; count: number };
 }
 
 async function processUrls(urls: string[]): Promise<PhenotypeCount> {
@@ -15,12 +17,38 @@ async function processUrls(urls: string[]): Promise<PhenotypeCount> {
   for (const url of urls) {
     try {
       const patientData = await dataService.fetchPatientData(url);
-      console.log('🚀 ~ processUrls ~ patientData:', patientData);
+      const zipBuffer = Buffer.from(patientData, 'binary');
 
-      // Assuming patientData is an array of phenotypes
-      for (const phenotype of patientData) {
-        const key = phenotype.description; // Use ICD9 or ICD10 description as key
-        phenotypeCounts[key] = (phenotypeCounts[key] || 0) + 1;
+      // Extract and process the CSV file in memory
+      const zip = await unzipper.Open.buffer(zipBuffer);
+      const filePromises = zip.files.map(async file => {
+        const records = new Promise<any[]>((resolve, reject) => {
+          const results: any[] = [];
+          file
+            .stream()
+            .pipe(csvParser())
+            .on('data', row => results.push(row))
+            .on('end', () => resolve(results))
+            .on('error', error => reject(error));
+        });
+        return records;
+      });
+
+      const allRecords = await Promise.all(filePromises);
+
+      for (const records of allRecords) {
+        // Process the records and update phenotypeCounts
+        for (const record of records) {
+          const key = record['קוד הבחנה'];
+          const phenotype = phenotypeCounts[key];
+          if (!phenotype) {
+            phenotypeCounts[key] = {
+              description: record['תיאור הבחנה'],
+              count: 0,
+            };
+          }
+          phenotypeCounts[key].count++;
+        }
       }
     } catch (error) {
       console.error(`Error processing URL ${url}:`, (error as Error).message);

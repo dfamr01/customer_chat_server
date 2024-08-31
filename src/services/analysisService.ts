@@ -4,21 +4,21 @@ import dataService from './dataService';
 import { CONCURRENCY } from '../config';
 
 interface PhenotypeCount {
+  [key: string]: { description: string; count: number };
+}
+interface PhenotypeCountMerge {
   [key: string]: number;
 }
 
 class AnalysisService {
   private async getPatientDataUrls(): Promise<string[]> {
     const urls: string[] = [];
-    let offset = 15;
+    let offset = 0;
     let hasMore = true;
 
     try {
       while (hasMore) {
-        console.log('🚀 ~ AnalysisService ~ getPatientDataUrls ~ offset:', offset);
-
         const address = await dataService.getPatientDataAddresses(offset);
-        console.log('🚀 ~ AnalysisService ~ getPatientDataUrls ~ address:', address);
         if (!address?.url) {
           hasMore = false;
         } else {
@@ -51,16 +51,20 @@ class AnalysisService {
     });
   }
 
-  private mergeCounts(countArrays: PhenotypeCount[]): PhenotypeCount {
+  private mergeCounts(countArrays: PhenotypeCount[]): PhenotypeCountMerge {
     return countArrays.reduce((acc, counts) => {
       for (const [key, value] of Object.entries(counts)) {
-        acc[key] = (acc[key] || 0) + value;
+        if (!acc[value.description]) {
+          acc[value.description] = value.count;
+        } else {
+          acc[value.description] += value.count;
+        }
       }
       return acc;
-    }, {} as PhenotypeCount);
+    }, {} as PhenotypeCountMerge);
   }
 
-  async analyze(): Promise<PhenotypeCount> {
+  async analyze(): Promise<PhenotypeCountMerge> {
     const urls = await this.getPatientDataUrls();
     const chunkSize = Math.ceil(urls.length / +CONCURRENCY);
     let urlChunks = Array.from({ length: +CONCURRENCY }, (_, i) => urls.slice(i * chunkSize, (i + 1) * chunkSize));
@@ -70,6 +74,7 @@ class AnalysisService {
     const mergedCounts = this.mergeCounts(results);
 
     await dataService.sendStatistics(mergedCounts);
+    console.log('🚀 ~ AnalysisService ~ analyze ~ mergedCounts:', mergedCounts);
 
     return mergedCounts;
   }

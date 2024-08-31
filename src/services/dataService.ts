@@ -20,7 +20,7 @@ class DataService {
 
   async fetchPatientData(url: string): Promise<any> {
     try {
-      return await httpClient.get(url, { responseType: 'arraybuffer' });
+      return await httpClient.getFileToDownload(url);
     } catch (error) {
       console.error('Failed to fetch patient data:', (error as Error).message);
       throw error;

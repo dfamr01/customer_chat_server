@@ -10,6 +10,18 @@ class HttpClient {
     });
   }
 
+  async getFileToDownload<T>(url: string) {
+    try {
+      const response: AxiosResponse<T> = await axios.get(url, {
+        responseType: 'arraybuffer',
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error in GET request to ${url}:`, (error as Error).message);
+      throw error;
+    }
+  }
+
   async get<T>(url: string, params: Record<string, any> = {}, headers: Record<string, string> = {}): Promise<T> {
     try {
       const response: AxiosResponse<T> = await this.client.get(url, { params, headers });
