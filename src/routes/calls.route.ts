@@ -27,7 +27,6 @@ class CallsRoute extends WebSocketBase implements Routes {
       console.log('A user connected');
 
       socket.on('deleteCall', this.callsController.deleteCall);
-      // socket.on('forwardMessage', this.callsController.forwardMessage);
 
       socket.on('disconnect', () => {
         console.log('User disconnected');
