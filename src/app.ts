@@ -9,20 +9,17 @@ import morgan from 'morgan';
 import { connect, set, disconnect } from 'mongoose';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS, WEB_SOCKET_PORT } from '@config';
+import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
 import { dbConnection } from '@databases';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 import CallsController from './controllers/calls.controller';
-import { Server as SocketIOServer } from 'socket.io';
 
 class App {
   public app: express.Application;
   public env: string;
   public port: string | number;
-  public portWebSocket:  number;
-  public io: SocketIOServer;
   public callsController: CallsController;
   public server: http.Server;
 
@@ -30,30 +27,8 @@ class App {
     this.app = express();
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
-    this.portWebSocket = +WEB_SOCKET_PORT || 3005;
 
     this.server = http.createServer(this.app);
-
-    this.io = new SocketIOServer(this.portWebSocket);
-
-
-    this.io.on('connection', socket => {
-      console.log('App this.io.on ~ connection: success');
-      socket.on('disconnect', reason => {
-        console.log('App ~ this.io.on disconnect ~ reason:', reason);
-      });
-    });
-
-  
-    // this.io = new SocketIOServer(this.server, {
-    //   cors: {
-    //     origin: 'http://localhost:5173',
-    //     methods: ['GET', 'POST'],
-    //     credentials: true,
-    //   },
-    // });
- 
-    // this.connectToDatabase();
 
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
@@ -117,9 +92,6 @@ class App {
   private initializeRoutes(routes: Routes[]) {
     routes.forEach(route => {
       this.app.use('/', route.router);
-      if (route?.initializeSocketEvents) {
-        route?.initializeSocketEvents(this.io);
-      }
     });
   }
 
